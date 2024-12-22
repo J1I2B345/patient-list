@@ -9,12 +9,11 @@ interface UserAttributes {
   isActive: boolean;
   createdAt: Date;
   updatedAt: Date;
-  deletedAt?: Date;
 }
 
-type UserCreationAttributes = Omit<
+export type UserCreationAttributes = Omit<
   UserAttributes,
-  'id' | 'createdAt' | 'updatedAt' | 'deletedAt'
+  'isActive' | 'id' | 'createdAt' | 'updatedAt' | 'deletedAt'
 >;
 
 @Table({
