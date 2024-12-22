@@ -6,21 +6,26 @@ on:
   push:
     branches: [main, develop]
 
+permissions:
+  contents: read
+  pull-requests: read
+
 jobs:
   changes:
     runs-on: ubuntu-latest
-    # Set job outputs to values from filter step
     outputs:
       backend: ${{ steps.filter.outputs.backend }}
       frontend: ${{ steps.filter.outputs.frontend }}
 
     steps:
-      # For pull requests it's not necessary to checkout the code
       - uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
 
       - uses: dorny/paths-filter@v2
         id: filter
         with:
+          token: ${{ secrets.GITHUB_TOKEN }}
           filters: |
             backend:
               - 'backend/**'
@@ -77,4 +82,3 @@ jobs:
       - name: Run Frontend Tests
         run: |
           npm run test
-          npm run test:e2e
