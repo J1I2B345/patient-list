@@ -4,7 +4,7 @@ import {
   PatientCreationAttributes,
 } from '../../database/models/Patient';
 import { BadRequestError } from '../../errors/bad-request-error';
-import { storageService } from '../storage';
+import { StorageService } from '../storage';
 
 class PatientService {
   constructor() {}
@@ -32,7 +32,7 @@ class PatientService {
     //recover url from firebase
     return Promise.all(
       patients.map(async (patient) => {
-        patient.photoUrl = await storageService.getDownloadUrl(
+        patient.photoUrl = await StorageService.getInstance().getDownloadUrl(
           patient.photoUrl
         );
         return patient;

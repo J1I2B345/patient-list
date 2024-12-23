@@ -1,9 +1,16 @@
 import { Storage } from 'firebase-admin/storage';
-import { storage } from '../config/firebase';
+import { getStorageInstance } from '../config/firebase';
 
 export class StorageService {
+  private static instance: StorageService | null = null;
+
   constructor(private storage: Storage) {
     this.storage = storage;
+  }
+  static getInstance() {
+    if (!StorageService.instance)
+      StorageService.instance = new StorageService(getStorageInstance());
+    return StorageService.instance;
   }
 
   async uploadFile(file: Express.Multer.File) {
@@ -48,4 +55,3 @@ export class StorageService {
     }
   }
 }
-export const storageService = new StorageService(storage);
