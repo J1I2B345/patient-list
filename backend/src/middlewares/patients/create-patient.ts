@@ -15,7 +15,7 @@ const createPatient = async (
 
     req.patient = patient;
 
-    res.status(200).send({ data: patient });
+    res.status(201).send({ data: patient });
     next();
   } catch (error: any) {
     if (req.body?.photoUrl) await storageService.deleteFile(req.body?.photoUrl);
