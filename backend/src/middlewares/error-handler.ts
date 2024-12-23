@@ -25,12 +25,6 @@ export const errorHandler = (
     return;
   }
 
-  // TODO: replace with logger
-  console.log(
-    'error not instance of CustomError',
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    (error as any).response?.data || error.message
-  );
   res.status(400).send({
     errors: [{ message: 'Something went wrong' }],
   });
