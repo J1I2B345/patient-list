@@ -1,26 +1,29 @@
 import { Table, Column, Model, DataType } from 'sequelize-typescript';
 
-interface UserAttributes {
+export interface PatientAttributes {
   id: number;
   email: string;
   name: string;
-  password: string;
   phoneNumber: string;
-  isActive: boolean;
+  photoUrl: string;
+  isVerified: boolean;
   createdAt: Date;
   updatedAt: Date;
 }
 
-export type UserCreationAttributes = Omit<
-  UserAttributes,
-  'isActive' | 'id' | 'createdAt' | 'updatedAt' | 'deletedAt'
+export type PatientCreationAttributes = Omit<
+  PatientAttributes,
+  'isVerified' | 'id' | 'createdAt' | 'updatedAt' | 'deletedAt'
 >;
 
 @Table({
-  tableName: 'users',
+  tableName: 'patients',
   timestamps: true,
 })
-export class User extends Model<UserAttributes, UserCreationAttributes> {
+export class Patient extends Model<
+  PatientAttributes,
+  PatientCreationAttributes
+> {
   @Column({
     type: DataType.STRING(50),
     allowNull: false,
@@ -35,10 +38,11 @@ export class User extends Model<UserAttributes, UserCreationAttributes> {
   email!: string;
 
   @Column({
-    type: DataType.STRING(50),
+    type: DataType.STRING(120),
     allowNull: false,
+    unique: true,
   })
-  password!: string;
+  photoUrl!: string;
 
   @Column({
     type: DataType.STRING(20),
@@ -47,9 +51,15 @@ export class User extends Model<UserAttributes, UserCreationAttributes> {
   phoneNumber!: string;
 
   @Column({
+    type: DataType.STRING(5),
+    allowNull: false,
+  })
+  countryCode!: string;
+
+  @Column({
     type: DataType.BOOLEAN,
     allowNull: false,
-    defaultValue: true,
+    defaultValue: false,
   })
-  isActive!: boolean;
+  isVerified!: boolean;
 }

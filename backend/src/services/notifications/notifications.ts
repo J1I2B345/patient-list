@@ -1,15 +1,21 @@
-import { User } from '../../database/models/User';
-import EmailService from './providers/emailProvider';
+import { Patient } from '../../database/models/Patient';
+import EmailService from './providers/email-provider';
 
 export interface NotificationInterface {
-  sendNotification(message: string, user: User): Promise<unknown>;
+  sendNotification(
+    message: { text: string; html?: string },
+    patient: Patient
+  ): Promise<unknown>;
 }
 
 class NotificationService implements NotificationInterface {
   constructor(private service: NotificationInterface) {}
 
-  sendNotification(message: string, user: User): Promise<unknown> {
-    return this.service.sendNotification(message, user);
+  sendNotification(
+    message: { text: string; html?: string },
+    patient: Patient
+  ): Promise<unknown> {
+    return this.service.sendNotification(message, patient);
   }
 }
 

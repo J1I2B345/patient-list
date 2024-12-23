@@ -2,7 +2,7 @@ import nodemailer, { Transporter } from 'nodemailer';
 
 import { NotificationInterface } from '../notifications';
 import notificationConfig from '../../../config/notification';
-import { User } from '../../../database/models/User';
+import { Patient } from '../../../database/models/Patient';
 
 const {
   email: { service, user, pass, from },
@@ -20,9 +20,11 @@ class EmailService implements NotificationInterface {
     return this.transporter;
   };
 
-  sendNotification(message: string, user: User) {
-    console.log(`Sending email to user ${user.email}: ${message}`);
-    return this.getService().sendMail(this.createMessage(message, user.email));
+  sendNotification(message: { text: string; html?: string }, patient: Patient) {
+    console.log(`Sending email to patient ${patient.email}: ${message}`);
+    return this.getService().sendMail(
+      this.createMessage(message, patient.email)
+    );
   }
 
   createTransporter = (): Transporter => {
@@ -36,12 +38,13 @@ class EmailService implements NotificationInterface {
     });
   };
 
-  createMessage = (message: string, to: string) => {
+  createMessage = (message: { text: string; html?: string }, to: string) => {
     return {
       from: this.from,
       to,
       subject: 'Message',
-      text: message,
+      text: message.text,
+      ...(message.html && { html: message.html }),
     };
   };
 }

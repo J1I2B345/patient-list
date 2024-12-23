@@ -2,27 +2,49 @@ import express from 'express';
 import dotenv from 'dotenv';
 dotenv.config();
 
-import { sequelize } from './database/config';
+import { sequelize } from './config/database';
+import router from './routes';
+import { errorHandler } from './middlewares/error-handler';
+import { NotFoundError } from './errors/not-found-error';
+import { DatabaseConnectionError } from './errors/database-connection-error';
+import { Patient } from './database/models/Patient';
+
+declare module 'express-serve-static-core' {
+  interface Request {
+    file?: Express.Multer.File;
+    patient?: Patient;
+  }
+}
 
 const app = express();
 
 const PORT = process.env.PORT || 3000;
 
-app.get('/', (req, res) => {
-  res.send('Hello World1');
+app.use(express.json({ limit: '50mb' }));
+app.use(express.urlencoded({ extended: true }));
+
+app.use('/api', router);
+
+app.all('*', () => {
+  throw new NotFoundError();
 });
 
-app.get('/two', (req, res) => {
-  res.send('Hello World two');
-});
+app.use(errorHandler);
 
-app.listen(PORT, async () => {
+const start = async () => {
   try {
-    await sequelize.sync({ force: true }); // `force: true` drops tables on restart
-    console.log('Database synced!');
-    console.log(`Server is running at http://localhost:${PORT}`);
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  } catch (err: any) {
-    console.log('error', err?.message);
+    try {
+      await sequelize.sync({ force: true }); // `force: true` drops tables on restart
+      console.log('Connection has been established successfully.');
+    } catch (error) {
+      throw new DatabaseConnectionError();
+    }
+    app.listen(PORT, () => {
+      console.log(`Server is running at http://localhost:${PORT}`);
+    });
+  } catch (error) {
+    console.error('Unable to initialize server', error);
   }
-});
+};
+
+start();
