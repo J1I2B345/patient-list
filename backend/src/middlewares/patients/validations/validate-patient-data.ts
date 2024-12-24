@@ -5,8 +5,8 @@ import patientService from '../../../services/patients';
 const validateEmail = check('email', 'Email is required')
   .isEmail()
   .normalizeEmail()
-  .isLength({ max: 100 })
-  .withMessage('Email must be less than 100 characters')
+  .isLength({ min: 12, max: 100 })
+  .withMessage('Email must be between 12 and 100 characters')
   .custom((value) => {
     const isGmail = value?.split('@')?.[1] === 'gmail.com';
     if (!isGmail) {
@@ -19,28 +19,32 @@ const validateName = check('name', 'Name is required')
   .trim()
   .escape()
   .isString()
-  .isLength({ max: 50 })
-  .withMessage('Name must be less than 50 characters');
+  .isLength({ min: 2, max: 50 })
+  .withMessage('Name must be between 2 and 50 characters');
 
 const validateCountryCode = check('countryCode', 'Country code is required')
   .trim()
   .escape()
   .isString()
   .isLength({
+    min: 2,
     max: 5,
   })
-  .withMessage('Phone number must be less than 20 characters');
+  .withMessage('Phone number must be between 2 and 20 characters');
 
 const validatePhoneNumber = check('phoneNumber', 'Phone number is required')
   .trim()
   .escape()
   .isString()
   .isLength({
+    min: 5,
     max: 20,
   })
-  .withMessage('Phone number must be less than 20 characters')
-  .custom((value) => Number(value))
-  .withMessage('Phone number should contain only numbes');
+  .withMessage('Phone number must be between 5 and 20 characters')
+  .isMobilePhone('any')
+  .withMessage('Phone number should respect format e.g 5491122334455 ');
+// .custom((value) => Number(value))
+// .withMessage('Phone number should contain only numbes');
 
 const validateEmailIsUnique = check('email')
   .normalizeEmail()
@@ -54,7 +58,7 @@ const validateEmailIsUnique = check('email')
 export default [
   validateEmail,
   validateName,
-  validateCountryCode,
+  // validateCountryCode,
   validatePhoneNumber,
   validateEmailIsUnique,
 ];
