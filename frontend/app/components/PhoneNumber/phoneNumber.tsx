@@ -1,7 +1,8 @@
 import React from 'react';
-import { isMobilePhone } from 'validator';
 import ReactFlagsSelect from 'react-flags-select';
 import { CountryCode, getCountryCallingCode } from 'libphonenumber-js';
+import { validateMobilePhone } from '../../utils/validations';
+import InputWithError from '../TextInput';
 
 const PhoneContext = React.createContext<{
   countryCode: string;
@@ -16,9 +17,9 @@ const SetPhoneContext = React.createContext<{
 } | null>(null);
 
 function PhoneProvider({ children }: { children: React.ReactNode }) {
-  const [countryCode, setRawCountryCode] = React.useState('+1'); // Default countryCode
-  const [flag, setFlag] = React.useState('US'); // Default countryCode
-  const [phoneNumber, setRawPhoneNumber] = React.useState('+1');
+  const [countryCode, setRawCountryCode] = React.useState('1');
+  const [flag, setFlag] = React.useState('US');
+  const [phoneNumber, setRawPhoneNumber] = React.useState('1');
 
   const setPhoneNumber = (number: string) => {
     // Ensure phoneNumber always includes countryCode
@@ -73,54 +74,47 @@ function PhoneInput({
   text: string;
   wasSubmitted: boolean;
 }) {
-  const { countryCode: code, phoneNumber, flag } = usePhone();
+  const { phoneNumber, flag } = usePhone();
   const { setCountryCode, setPhoneNumber, setFlag } = useSetPhone();
 
   const [touched, setTouched] = React.useState(false);
-  const isValidMobilePhone = isMobilePhone(phoneNumber.replace('+', ''));
-  console.log('isValidMobilePhone', isValidMobilePhone);
+  const isValidMobilePhone = validateMobilePhone(phoneNumber);
   const errorMessage = !isValidMobilePhone
     ? 'Please insert a valid mobile phone number e.g 5491122334455'
     : null;
   const displayErrorMessage = (wasSubmitted || touched) && errorMessage;
 
   return (
-    <div key={name} className="flex flex-col">
-      <label htmlFor={`${name}-countryCode`}>Country Code:</label>{' '}
-      <input
-        id="Country Code"
-        name="Country Code"
-        type="text"
-        value={code}
-        disabled
-        required
-      />
+    <div key={name} className="mb-4">
+      <label
+        className="block font-medium text-gray-700"
+        htmlFor={`${name}-countryCode`}
+      >
+        Country Code:
+      </label>
       <ReactFlagsSelect
         selected={flag}
         onSelect={(flag) => {
-          console.log('flag', flag);
           const countryCode = getCountryCallingCode(flag as CountryCode);
           setFlag(flag);
           setCountryCode(countryCode);
         }}
       />
-      <label htmlFor={`${name}-input`}>{text}:</label>{' '}
-      <input
-        id={`${name}-input`}
+      <label
+        htmlFor={`${name}-input`}
+        className="block font-medium text-gray-700"
+      >
+        {text}:
+      </label>
+
+      <InputWithError
         name={name}
-        type="text"
-        value={phoneNumber} // Display without the countryCode
+        value={phoneNumber}
         onChange={(event) => setPhoneNumber(event.currentTarget.value)}
         onBlur={() => setTouched(true)}
-        pattern="[0-9]{3,15}" // Example validation
-        required
-        aria-describedby={displayErrorMessage ? `${name}-error` : undefined}
+        errorMessage={errorMessage}
+        displayErrorMessage={!!displayErrorMessage}
       />
-      {displayErrorMessage ? (
-        <span role="alert" id={`${name}-error`} className="error-message">
-          {errorMessage}
-        </span>
-      ) : null}
     </div>
   );
 }

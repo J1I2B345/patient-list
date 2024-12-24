@@ -6,7 +6,7 @@ export async function GET() {
   try {
     const { data } = await axios.get(`${API_BASE_URL}/patients`);
     return Response.json(data);
-  } catch (error) {
+  } catch (error: any) {
     return Response.json(
       { error: error.response?.data || error.message },
       {
@@ -20,12 +20,12 @@ export async function GET() {
 export async function POST(request: Request) {
   try {
     const formData = await request.formData();
-    const result = await axios.post(`${API_BASE_URL}/patients`, formData);
-    return Response.json(
-      { data: result.data },
-      { status: result.status || 201 }
+    const { status, data } = await axios.post(
+      `${API_BASE_URL}/patients`,
+      formData
     );
-  } catch (error) {
+    return Response.json(data, { status: status || 201 });
+  } catch (error: any) {
     return Response.json(
       error.response?.data
         ? { ...error.response?.data }

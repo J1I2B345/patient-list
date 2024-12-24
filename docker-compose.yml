@@ -1,19 +1,9 @@
-version: '3.8'
 
 services:
   backend:
     build:
       context: ./backend
       dockerfile: Dockerfile
-    develop:
-      watch:
-        - action: sync
-          path: ./backend
-          target: /app
-          ignore:
-            - node_modules/
-        - action: rebuild
-          path: package.json
 
     container_name: backend
     restart: unless-stopped
@@ -25,6 +15,15 @@ services:
       MYSQL_USER: ${DB_USER}
       MYSQL_PASSWORD: ${DB_PASS}
       MYSQL_DATABASE: ${DB_NAME}
+      PORT: ${PORT}
+      NODE_ENV: ${NODE_ENV}
+      EMAIL_USER_NAME: ${EMAIL_USER_NAME}
+      EMAIL_USER_PASSWORD: ${EMAIL_USER_PASSWORD}
+      EMAIL_SERVICE_PROVIDER: ${EMAIL_SERVICE_PROVIDER}
+      EMAIL_FROM_NAME: ${EMAIL_FROM_NAME}
+      EMAIL_FROM_ADDRESS: ${EMAIL_FROM_ADDRESS}
+      BASE_URL: ${BASE_URL}
+
     depends_on:
       - db
     networks:
@@ -34,21 +33,12 @@ services:
     build:
       context: ./frontend
       dockerfile: Dockerfile
-    develop:
-      watch:
-        - action: sync
-          path: ./frontend
-          target: /app
-          ignore:
-            - node_modules/
-        - action: rebuild
-          path: package.json
     container_name: frontend
     restart: unless-stopped
     ports:
       - '3000:3000'
     environment:
-      REACT_APP_API_URL: http://localhost:5000
+      API_BASE_URL: ${API_BASE_URL}
     networks:
       - app-network
 

@@ -1,69 +1,49 @@
 'use client';
 import axios from 'axios';
-import Image from 'next/image';
 import { redirect } from 'next/navigation';
 import { useEffect, useState } from 'react';
 
-type User = {
-  id: number;
-  name: string;
-  phoneNumber: string;
-  email: string;
-  photoUrl: string;
-};
+import { Patient } from './utils/types';
+import { getPatients, savePatients } from './utils/locaStorage';
+import CardContainer from './components/PatientCard/CardContainer';
+import LoadingSpinner from './components/Loader';
+
+import React from 'react';
+import { PrimaryButton } from './components/Buttons';
 
 export default function Home() {
-  const [users, setUsers] = useState<User[]>([]);
-  const [loading, setLoading] = useState(false);
+  const [patients, setPatients] = useState<Patient[]>([]);
+  const [loading, setLoading] = useState(true);
+
   useEffect(() => {
-    setLoading(true);
+    const patientsFromLocalStorage = getPatients();
+    if (patientsFromLocalStorage) {
+      if (patientsFromLocalStorage.length) {
+        setPatients(patientsFromLocalStorage);
+      }
+      setLoading(false);
+      return;
+    }
     axios
       .get('/api/patients')
       .then(({ data }) => {
-        return setUsers(data?.data || []);
+        savePatients(data?.data);
+        setPatients(data?.data);
       })
       .catch()
       .finally(() => setLoading(false));
   }, []);
-  return (
-    <div className="grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
-      <main className="flex flex-col gap-8 row-start-2 items-center sm:items-start">
-        {loading ? (
-          <>loading...</>
-        ) : (
-          <>
-            <ol className="list-inside list-decimal text-sm text-center sm:text-left font-[family-name:var(--font-geist-mono)]">
-              {users.length === 0 ? (
-                <>empty state</>
-              ) : (
-                users.map((e) => (
-                  <li key={e.id} className="mb-2">
-                    {e.name}
-                    <Image
-                      src={e.photoUrl}
-                      width={100}
-                      height={100}
-                      alt={`${e.name}`}
-                      loading="lazy"
-                      placeholder="empty"
-                    />
-                  </li>
-                ))
-              )}
-            </ol>
 
-            <div className="flex gap-4 items-center flex-col sm:flex-row">
-              <button
-                onClick={() => {
-                  redirect('/form');
-                }}
-              >
-                Add patient
-              </button>
-            </div>
-          </>
-        )}
-      </main>
+  return (
+    <div className="min-h-screen bg-gray-100">
+      <div className="w-dvw flex justify-center p-4">
+        <PrimaryButton
+          onClick={() => redirect('/form')}
+          text="Add patient"
+          className="w-full sm:w-1/3"
+        />
+      </div>
+      {loading ? <LoadingSpinner /> : <CardContainer patients={patients} />}
     </div>
   );
 }

@@ -12,7 +12,6 @@ export const sendNotification = async (
   try {
     console.log('sending notif');
     const { patient } = req;
-    console.log('patient', patient);
     if (!patient) {
       throw new BadRequestError('Patient is required to send notification');
     }
