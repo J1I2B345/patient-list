@@ -15,7 +15,9 @@ const createPatient = async (
 
     req.patient = patient;
     // TODO: create a DTO for the patient
-    const photoUrl = await storageService.getDownloadUrl(req.body?.photoUrl);
+    const photoUrl = await StorageService.getInstance().getDownloadUrl(
+      req.body?.photoUrl
+    );
     res.status(201).send({ data: { ...patient.toJSON(), photoUrl } });
     next();
   } catch (error: any) {

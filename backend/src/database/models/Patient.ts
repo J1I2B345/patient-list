@@ -50,12 +50,6 @@ export class Patient extends Model<
   })
   phoneNumber!: string;
 
-  // @Column({
-  //   type: DataType.STRING(5),
-  //   allowNull: false,
-  // })
-  // countryCode!: string;
-
   @Column({
     type: DataType.BOOLEAN,
     allowNull: false,
