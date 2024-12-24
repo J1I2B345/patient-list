@@ -21,14 +21,13 @@ class EmailService implements NotificationInterface {
   };
 
   sendNotification(message: { text: string; html?: string }, patient: Patient) {
-    console.log(`Sending email to patient ${patient.email}: ${message}`);
+    console.log(`Sending email to patient ${patient.email}`);
     return this.getService().sendMail(
       this.createMessage(message, patient.email)
     );
   }
 
   createTransporter = (): Transporter => {
-    console.log('Creating transporter');
     return nodemailer.createTransport({
       service: service,
       auth: {
