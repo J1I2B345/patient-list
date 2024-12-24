@@ -1,44 +1,36 @@
-import express from 'express';
-import dotenv from 'dotenv';
-dotenv.config();
-
+import { app } from './app';
 import { sequelize } from './config/database';
-import router from './routes';
-import { errorHandler } from './middlewares/error-handler';
-import { NotFoundError } from './errors/not-found-error';
+import { initializeFirebaseAdmin } from './config/firebase';
 import { DatabaseConnectionError } from './errors/database-connection-error';
-import { Patient } from './database/models/Patient';
+import { FirebaseConnectionError } from './errors/firebase-connection-error';
 
-declare module 'express-serve-static-core' {
-  interface Request {
-    file?: Express.Multer.File;
-    patient?: Patient;
-  }
-}
-
-const app = express();
+console.log('process.env.NODE_ENV', process.env.NODE_ENV);
 
 const PORT = process.env.PORT || 3000;
-
-app.use(express.json({ limit: '50mb' }));
-app.use(express.urlencoded({ extended: true }));
-
-app.use('/api', router);
-
-app.all('*', () => {
-  throw new NotFoundError();
-});
-
-app.use(errorHandler);
 
 const start = async () => {
   try {
     try {
-      await sequelize.sync({ force: true }); // `force: true` drops tables on restart
-      console.log('Connection has been established successfully.');
+      await sequelize.sync({
+        force: process.env.NODE_ENV === 'development' ? true : false,
+      }); // `force: true` drops tables on restart
+      console.log(
+        'Connection with Database has been established successfully.'
+      );
     } catch (error) {
       throw new DatabaseConnectionError();
     }
+
+    try {
+      initializeFirebaseAdmin();
+      console.log(
+        'Connection with Firebase has been established successfully.'
+      );
+    } catch (error: any) {
+      console.log('Firebase admin initialization error', error.stack);
+      throw new FirebaseConnectionError();
+    }
+
     app.listen(PORT, () => {
       console.log(`Server is running at http://localhost:${PORT}`);
     });

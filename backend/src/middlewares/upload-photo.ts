@@ -1,6 +1,6 @@
 import { NextFunction, Request, Response } from 'express';
 import { BadRequestError } from '../errors/bad-request-error';
-import { storageService } from '../services/storage';
+import { StorageService } from '../services/storage';
 
 export const uploadPhoto = async (
   req: Request,
@@ -18,7 +18,7 @@ export const uploadPhoto = async (
       );
     }
 
-    const urlFile = await storageService.uploadFile(
+    const urlFile = await StorageService.getInstance().uploadFile(
       req.file as Express.Multer.File
     );
     if (!urlFile) {
