@@ -5,6 +5,7 @@ metadata:
 data:
   MYSQL_HOST: db-srv
   MYSQL_USER: root
-  MYSQL_DATABASE: patient_list
+  MYSQL_DATABASE: patients
   NODE_ENV: development
   PORT: "5000"
+  EMAIL_SERVICE_BASE_URL: http://email-srv:3001/api

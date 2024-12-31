@@ -1,4 +1,4 @@
-import { Patient } from '../database/models/Patient';
+import { Patient } from "../types/Patient";
 
 const { BASE_URL } = process.env;
 const htmlTemplate = (patient: Patient, baseUrl: string) => `
@@ -63,7 +63,7 @@ const htmlTemplate = (patient: Patient, baseUrl: string) => `
 
 export function createVerificationEmail(patient: Patient) {
   if (!BASE_URL)
-    throw new Error('Base URL is required to generate verifation email');
+    throw new Error("Base URL is required to generate verifation email");
 
   const text = `Dear ${patient.name},\nTo verify your account, please click the link below:\n${BASE_URL}/patients/${patient.id}\nThank you!\n`;
 
