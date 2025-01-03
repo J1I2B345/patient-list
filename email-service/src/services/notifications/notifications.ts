@@ -1,5 +1,5 @@
-import { Patient } from '../../database/models/Patient';
-import EmailService from './providers/email-provider';
+import { Patient } from "../../types/Patient";
+import EmailService from "./providers/email-provider";
 
 export interface NotificationInterface {
   sendVerificationNotification(patient: Patient): Promise<unknown>;

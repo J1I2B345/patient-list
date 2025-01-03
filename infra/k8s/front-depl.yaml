@@ -1,0 +1,39 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: front-depl
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: front
+  template:
+    metadata:
+      labels:
+        app: front
+    spec:
+      containers:
+        - name: front
+          image: juanbevilacqua/patient-list-frontend
+          envFrom:
+            - configMapRef:
+                name: front-configmap
+            # - secretRef:
+            #     name: front-secrets
+          ports:
+            - containerPort: 3000
+---
+# Path: infra/k8s/backend-srv.yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: front-srv
+spec:
+  selector:
+    app: front
+  ports:
+    - name: front
+      protocol: TCP
+      port: 3000 # Port that the service will listen on
+      targetPort: 3000 # Port that the service will forward to
+

@@ -25,6 +25,13 @@ export class Patient extends Model<
   PatientCreationAttributes
 > {
   @Column({
+    type: DataType.INTEGER,
+    autoIncrement: true,
+    primaryKey: true,
+  })
+  id!: number;
+
+  @Column({
     type: DataType.STRING(50),
     allowNull: false,
   })

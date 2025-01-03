@@ -1,0 +1,41 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: db-depl
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: db
+  template:
+    metadata:
+      labels:
+        app: db
+    spec:
+      containers:
+        - name: db
+          image: mysql:8
+          envFrom:
+            - secretRef:
+                name: db-secrets
+          volumeMounts:
+            - name: init-script
+              mountPath: /docker-entrypoint-initdb.d/init.sql
+              subPath: init.sql
+      volumes:
+        - name: init-script
+          configMap:
+            name: db-init-script
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: db-srv
+spec:
+  selector:
+    app: db
+  ports:
+    - name: db
+      protocol: TCP
+      port: 3306
+      targetPort: 3306

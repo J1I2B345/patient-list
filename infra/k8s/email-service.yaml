@@ -1,0 +1,38 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: email-depl
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: email
+  template:
+    metadata:
+      labels:
+        app: email
+    spec:
+      containers:
+        - name: email
+          image: juanbevilacqua/patient-list-email-service:latest # Replace with your image
+          ports:
+            - containerPort: 3001
+          envFrom:
+            - configMapRef:
+                name: email-service-configmap
+            - secretRef:
+                name: email-service-secrets
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: email-srv
+spec:
+  selector:
+    app: email
+  ports:
+    - protocol: TCP
+      port: 3001
+      targetPort: 3001
+  type: ClusterIP

@@ -22,16 +22,6 @@ const validateName = check('name', 'Name is required')
   .isLength({ min: 2, max: 50 })
   .withMessage('Name must be between 2 and 50 characters');
 
-const validateCountryCode = check('countryCode', 'Country code is required')
-  .trim()
-  .escape()
-  .isString()
-  .isLength({
-    min: 2,
-    max: 5,
-  })
-  .withMessage('Phone number must be between 2 and 20 characters');
-
 const validatePhoneNumber = check('phoneNumber', 'Phone number is required')
   .trim()
   .escape()
@@ -43,8 +33,6 @@ const validatePhoneNumber = check('phoneNumber', 'Phone number is required')
   .withMessage('Phone number must be between 5 and 20 characters')
   .isMobilePhone('any')
   .withMessage('Phone number should respect format e.g 5491122334455 ');
-// .custom((value) => Number(value))
-// .withMessage('Phone number should contain only numbes');
 
 const validateEmailIsUnique = check('email')
   .normalizeEmail()
@@ -58,7 +46,6 @@ const validateEmailIsUnique = check('email')
 export default [
   validateEmail,
   validateName,
-  // validateCountryCode,
   validatePhoneNumber,
   validateEmailIsUnique,
 ];
