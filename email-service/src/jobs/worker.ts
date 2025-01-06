@@ -1,6 +1,7 @@
 import { Worker } from "bullmq";
 import redisConfig from "../config/redis";
 import { notificationService } from "../services/notifications/notifications";
+import { logError, logInfo } from "../utils/logger";
 
 const worker = new Worker(
   "email-queue",
@@ -17,11 +18,11 @@ const worker = new Worker(
 );
 
 worker.on("completed", (job) => {
-  console.log(`Job ${job.id} completed successfully.`);
+  logInfo("Job completed successfully", { job: job });
 });
 
 worker.on("failed", (job, err) => {
-  console.error(`Job ${job?.id} failed: ${err.message}`);
+  logError("Job failed", { job: job, error: err });
 });
 
 export default worker;

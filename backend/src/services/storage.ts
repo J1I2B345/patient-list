@@ -1,5 +1,6 @@
 import { Storage } from 'firebase-admin/storage';
 import { getStorageInstance } from '../config/firebase';
+import { logError } from '../utils/logger';
 
 export class StorageService {
   private static instance: StorageService | null = null;
@@ -24,7 +25,7 @@ export class StorageService {
 
     return new Promise<string>((resolve, reject) => {
       blobStream.on('error', (err) => {
-        console.error(err.message);
+        logError('Error uploading file.', { error: err.message });
         reject(new Error('Error uploading file.'));
       });
 

@@ -25,7 +25,6 @@ export const uploadPhoto = async (
       throw new BadRequestError('Error uploading file.');
     }
     req.body = { ...req.body, photoUrl: urlFile };
-    console.log('File uploaded', urlFile);
     next();
   } catch (error) {
     next(error);

@@ -4,6 +4,7 @@ import notificationConfig from "../../../config/notification";
 import { NotificationInterface } from "../notifications";
 import { Patient } from "../../../types/Patient";
 import { createVerificationEmail } from "../../../utils/emailService";
+import { logInfo } from "../../../utils/logger";
 
 const {
   email: { service, user, pass, from },
@@ -22,7 +23,7 @@ class EmailService implements NotificationInterface {
   };
 
   sendNotification(message: { text: string; html?: string }, patient: Patient) {
-    console.log(`Sending email to patient ${patient.email}`);
+    logInfo("Sending email to patient", { patient: patient });
     return this.getService().sendMail(
       this.createMessage(message, patient.email)
     );

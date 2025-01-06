@@ -4,26 +4,28 @@ dotenv.config();
 
 import emailQueue from "./jobs/email-queue";
 import "./jobs/worker";
+import { logError, logInfo } from "./utils/logger";
 
 const app = express();
 app.use(json());
 
 app.post("/api/send-verification-email", async (req, res) => {
-  console.log("Sending verification email");
-  console.log(req.body);
+  logInfo("Sending verification email", { body: req.body });
   const { patient } = req.body;
 
   try {
-    console.log("Adding email job to the queue");
+    logInfo("Adding email job to the queue", { patient: patient });
     await emailQueue.add("email-queue", { patient });
-    console.log("Email job added to the queue");
+    logInfo("Email job added to the queue", { patient: patient });
     res.status(200).json({ message: "Email job added to the queue." });
   } catch (error) {
-    console.error("Failed to add email job:", error);
+    logError("Failed to add email job", { error: error });
     res.status(500).json({ message: "Failed to add email job." });
   }
 });
 
 const PORT = process.env.PORT || 3001;
 
-app.listen(PORT, () => console.log(`Email service listening on port ${PORT}`));
+app.listen(PORT, () =>
+  logInfo("Email service listening on port", { port: PORT })
+);
