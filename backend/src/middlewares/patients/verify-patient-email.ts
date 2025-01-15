@@ -1,5 +1,6 @@
 import { NextFunction, Request, Response } from 'express';
 import patientService from '../../services/patients';
+import { logInfo } from '../../utils/logger';
 
 const verifyPatientEmail = async (
   req: Request,
@@ -8,7 +9,7 @@ const verifyPatientEmail = async (
 ) => {
   try {
     const patient = await patientService.verifyEmail(Number(req.params.id));
-    console.log('patient verified', patient);
+    logInfo('Patient email verified', { patient: patient });
     res.status(200).send('Your account was succesfully verified!');
   } catch (error) {
     next(error);

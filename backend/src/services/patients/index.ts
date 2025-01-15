@@ -4,6 +4,7 @@ import {
   PatientCreationAttributes,
 } from '../../database/models/Patient';
 import { BadRequestError } from '../../errors/bad-request-error';
+import { logInfo } from '../../utils/logger';
 import { StorageService } from '../storage';
 
 class PatientService {
@@ -12,22 +13,19 @@ class PatientService {
     return await Patient.create(patient);
   }
   async update(patient: Patient, newData: Partial<PatientAttributes>) {
-    console.log('Updating patient', patient);
     return Patient.update(newData, {
       where: { id: patient.id },
       returning: true,
     });
   }
   async delete(patient: Patient) {
-    console.log('Deleting patient', patient);
-    return patient;
+    logInfo('Deleting patient', { patient: patient });
+    throw new Error('Not implemented');
   }
   async getById(id: number) {
-    console.log('Getting patient', id);
     return Patient.findByPk(id);
   }
   async getAll() {
-    console.log('Getting all patients');
     const patients = await Patient.findAll();
     //recover url from firebase
     return Promise.all(
@@ -40,7 +38,6 @@ class PatientService {
     );
   }
   async getByEmail(email: string) {
-    console.log('Getting patient by email', email);
     return Patient.findOne({ where: { email } });
   }
 

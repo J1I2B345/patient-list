@@ -5,3 +5,6 @@ metadata:
 data:
   REDIS_HOST: redis-srv
   REDIS_PORT: "6379"
+  LOGGER_FILE: "email-service.log"
+  LOGGER_ERROR_FILE: "email-service-error.log"
+  LOGGER_LEVEL: "info"
